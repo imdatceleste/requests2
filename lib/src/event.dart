@@ -1,18 +1,21 @@
 import 'dart:async';
 
 class Event {
-  late StreamController<dynamic> _streamController;
+  StreamController<dynamic> _streamController;
 
   Event() {
-    this._streamController = StreamController<dynamic>.broadcast(sync: true);
+    _streamController = StreamController<dynamic>.broadcast(sync: true);
   }
 
   Stream<dynamic> _getStream() {
-    return _streamController.stream;
+    return _streamController?.stream;
   }
 
   void dispose() {
-    _streamController.close();
+    if (_streamController != null) {
+      _streamController.close();
+      _streamController = null;
+    }
   }
 
   void listen(void callback(dynamic event)) {
@@ -21,6 +24,8 @@ class Event {
   }
 
   void publish(dynamic event) {
-    _streamController.add(event);
+    if (_streamController != null) {
+      _streamController.add(event);
+    }
   }
 }
